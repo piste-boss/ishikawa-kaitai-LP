@@ -597,6 +597,16 @@
   color: var(--paper);
   opacity: 0.15;
 }
+.voice__photo {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  transition: transform 0.6s;
+}
+.voice__card:hover .voice__photo {
+  transform: scale(1.05);
+}
 .voice__card-body {
   padding: 32px;
   flex: 1;

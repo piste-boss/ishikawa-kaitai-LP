@@ -9,10 +9,14 @@
   <meta property="og:description" content="愛知県碧南市・石川解体の採用LP。未経験から月収100万円。本気で稼ぎたい仲間を募集中。" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/ishikawa-hero-wide.jpg" />
+  {FaviconTag}
+  {GoogleAnalyticsTag}
+  {ItemAttentionTag}
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="sections.css" />
 </head>
 <body>
+{BackgroundTag}
 
 {block:IndexPage}
   <!-- HERO -->
@@ -556,7 +560,7 @@
           </div>
           <label>
             <span class="apply__label">伝えたいこと（任意）</span>
-            <textarea rows="4" name="message" placeholder="志望動機、聞きたいこと、なんでもOK"></textarea>
+            <input type="text" name="message" class="apply__message" placeholder="志望動機、聞きたいこと、なんでもOK" />
           </label>
           <button type="submit" class="btn-primary apply__submit">
             <span>応募を送信する</span>
@@ -679,6 +683,7 @@
             <a href="{ContactPageURL}">お問い合わせ</a>
             <a href="{PrivacyPageURL}">プライバシーポリシー</a>
             <a href="{LawPageURL}">特定商取引法に基づく表記</a>
+            {IllegalReportTag}
           </div>
         </div>
       </div>

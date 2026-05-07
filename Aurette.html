@@ -1,0 +1,775 @@
+{block:NotLoadItemsPage}<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{PageTitle}</title>
+{FaviconTag}
+{GoogleAnalyticsTag}
+{ItemAttentionTag}
+
+{block:Hidden}
+<meta name="BASE-Theme-Name" content="Aurette">
+<meta name="BASE-Theme-Version" content="1.0.0">
+<meta name="image:Hero Image" content="" label="ヒーロー画像">
+<meta name="image:Girls Image" content="" label="Girlsモザイク画像">
+<meta name="image:Boys Image" content="" label="Boysモザイク画像">
+<meta name="image:Atelier Image" content="" label="アトリエモザイク画像">
+<meta name="image:Detail Image" content="" label="刺繍ディテールモザイク画像">
+<meta name="image:Gift Image" content="" label="ギフト画像">
+<meta name="image:Story Image" content="" label="Our Story 画像">
+<meta name="color:Accent Color" content="#9096b8" label="アクセントカラー（ペリウィンクル）">
+<meta name="color:Background Tint" content="#f7f8fc" label="サブ背景色">
+{/block:Hidden}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --white:   #ffffff;
+  --off:     {color:Background Tint};
+  --off2:    #eeeef7;
+  --gold:    {color:Accent Color};
+  --gold2:   #b0b5d0;
+  --gold-lt: #dfe1ef;
+  --ink:     #1a1916;
+  --ink2:    #2e2c28;
+  --mid:     #6a6760;
+  --muted:   #a8a49c;
+  --border:  rgba(26,25,22,0.1);
+  --border2: rgba(26,25,22,0.06);
+  --ff-d: 'Cormorant Garamond', Georgia, serif;
+  --ff-b: 'Jost', sans-serif;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--ff-b);
+  background: var(--white);
+  color: var(--ink);
+  overflow-x: hidden;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky; top: 0; z-index: 200;
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 52px;
+  height: 68px;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-links { display: flex; gap: 36px; font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 400; color: var(--mid); }
+.nav-links-r { justify-content: flex-end; }
+.nav-a { text-decoration: none; color: inherit; transition: color 0.25s; }
+.nav-a:hover { color: var(--ink); }
+.nav-logo { text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.nav-logo-main { font-family: var(--ff-d); font-size: 23px; font-weight: 400; letter-spacing: 0.34em; text-transform: uppercase; color: var(--ink); line-height: 1; }
+.nav-logo-main img.logoImage { height: 32px; width: auto; object-fit: contain; }
+.nav-logo-sub { font-size: 7.5px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--gold); font-weight: 400; }
+.nav-utils { display: flex; gap: 14px; align-items: center; justify-content: flex-end; }
+.icon-btn { background: none; border: none; cursor: pointer; color: var(--mid); transition: color 0.25s; padding: 5px; display: flex; }
+.icon-btn:hover { color: var(--ink); }
+/* {BASEMenuTag} styles */
+.nav-utils ul { list-style: none; display: flex; gap: 10px; align-items: center; padding: 0; margin: 0; }
+.nav-utils ul li { list-style: none; }
+.nav-utils ul a { display: flex; align-items: center; color: var(--mid); text-decoration: none; transition: color 0.25s; }
+.nav-utils ul a:hover { color: var(--ink); }
+.nav-utils ul img { width: 20px; height: 20px; object-fit: contain; filter: brightness(0) opacity(0.45); transition: filter 0.25s; }
+.nav-utils ul a:hover img { filter: brightness(0) opacity(0.85); }
+.cart-badge { display: none; background: var(--gold); color: white; border-radius: 50%; font-size: 9px; width: 16px; height: 16px; align-items: center; justify-content: center; margin-left: -6px; margin-top: -8px; }
+.cart-badge.has-items { display: flex; }
+
+/* ── SEARCH OVERLAY ── */
+.search-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(255,255,255,0.97); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.search-overlay.open { opacity: 1; pointer-events: all; }
+.search-form { display: flex; border-bottom: 1.5px solid var(--ink); width: min(520px, 80vw); }
+.search-input { flex: 1; font-family: var(--ff-d); font-size: 22px; font-weight: 300; background: none; border: none; outline: none; padding: 10px 0; color: var(--ink); }
+.search-input::placeholder { color: var(--muted); }
+.search-submit { background: none; border: none; cursor: pointer; color: var(--mid); padding: 8px; display: flex; }
+.search-close { position: absolute; top: 28px; right: 32px; background: none; border: none; font-size: 28px; cursor: pointer; color: var(--mid); line-height: 1; font-family: var(--ff-b); font-weight: 200; }
+
+/* ── HERO ── */
+.hero { position: relative; height: 100vh; min-height: 620px; display: flex; align-items: flex-end; overflow: hidden; }
+.hero-photo { position: absolute; inset: 0; }
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.hero-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,18,15,0.72) 0%, rgba(20,18,15,0.18) 55%, transparent 100%); }
+.hero-text { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 80px 88px; width: 100%; max-width: 700px; }
+.hero-stamp { position: absolute; top: 52px; right: 52px; font-family: var(--ff-d); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.45); font-weight: 400; writing-mode: vertical-rl; opacity: 0; animation: fadeIn 1s ease 0.8s forwards; }
+.hero-eyebrow { font-size: 9.5px; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(255,255,255,0.7); font-weight: 400; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; opacity: 0; animation: fadeUp 0.7s var(--ease) 0.1s forwards; }
+.hero-eyebrow::before { content: ''; width: 22px; height: 1px; background: rgba(255,255,255,0.45); flex-shrink: 0; }
+.hero-title { font-family: var(--ff-d); font-size: clamp(52px, 6vw, 92px); font-weight: 300; line-height: 1.02; color: white; letter-spacing: -0.01em; margin-bottom: 28px; opacity: 0; animation: fadeUp 0.9s var(--ease) 0.25s forwards; }
+.hero-title em { font-style: italic; display: block; }
+.hero-sub { font-size: 13.5px; line-height: 1.95; color: rgba(255,255,255,0.72); font-weight: 300; max-width: 340px; margin-bottom: 44px; opacity: 0; animation: fadeUp 0.8s var(--ease) 0.4s forwards; }
+.hero-cta { display: flex; gap: 20px; align-items: center; opacity: 0; animation: fadeUp 0.8s var(--ease) 0.55s forwards; }
+.btn-dark { display: inline-block; text-decoration: none; background: white; color: var(--ink); font-family: var(--ff-b); font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 400; padding: 14px 32px; transition: background 0.3s, color 0.3s; cursor: pointer; border: none; }
+.btn-dark:hover { background: var(--gold); color: white; }
+.btn-text-link { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400; color: rgba(255,255,255,0.65); transition: color 0.25s; cursor: pointer; }
+.btn-text-link:hover { color: white; }
+.btn-text-link svg { transition: transform 0.3s; }
+.btn-text-link:hover svg { transform: translateX(3px); }
+.hero-scroll { position: absolute; bottom: 40px; right: 44px; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeIn 1s ease 1s forwards; }
+.scroll-word { font-size: 7.5px; letter-spacing: 0.26em; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 400; writing-mode: vertical-rl; }
+.scroll-line { width: 1px; height: 44px; background: rgba(255,255,255,0.2); position: relative; overflow: hidden; }
+.scroll-line::after { content: ''; position: absolute; top: -100%; left: 0; right: 0; height: 50%; background: rgba(255,255,255,0.6); animation: scrollFall 2.2s ease-in-out infinite 1.2s; }
+@keyframes scrollFall { 0% { top: -60%; } 70% { top: 110%; } 100% { top: 110%; } }
+
+/* ── MARQUEE ── */
+.marquee-wrap { overflow: hidden; padding: 11px 0; border-bottom: 1px solid var(--border); background: var(--white); }
+.marquee-track { display: flex; animation: marquee 50s linear infinite; white-space: nowrap; }
+.marquee-item { display: inline-flex; align-items: center; gap: 28px; padding: 0 28px; flex-shrink: 0; font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
+.marquee-dia { width: 4px; height: 4px; background: var(--gold-lt); transform: rotate(45deg); flex-shrink: 0; }
+
+/* ── STATEMENT ── */
+.statement { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border); }
+.statement-left { padding: 100px 80px 100px 72px; border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; background: var(--off); }
+.stmt-label { font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); font-weight: 400; display: flex; align-items: center; gap: 14px; margin-bottom: 36px; }
+.stmt-label::before { content: ''; width: 22px; height: 1px; background: var(--gold-lt); flex-shrink: 0; }
+.stmt-title { font-family: var(--ff-d); font-size: clamp(40px, 4vw, 64px); font-weight: 300; line-height: 1.08; color: var(--ink); }
+.stmt-title em { font-style: italic; display: block; }
+.statement-right { padding: 100px 72px 100px 80px; display: flex; flex-direction: column; justify-content: center; }
+.stmt-body { font-size: 15px; line-height: 2.05; color: var(--mid); font-weight: 300; margin-bottom: 44px; }
+.stmt-detail { font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 14px; }
+.stmt-detail::before { content: ''; width: 20px; height: 1px; background: var(--gold-lt); flex-shrink: 0; }
+
+/* ── MOSAIC ── */
+.mosaic { display: grid; grid-template-columns: 5fr 4fr 5fr; grid-template-rows: 520px 400px; gap: 3px; background: var(--border2); }
+.mosaic-cell { position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--off2); cursor: pointer; }
+.mosaic-cell:nth-child(1) { grid-column: 1; grid-row: 1; }
+.mosaic-cell:nth-child(2) { grid-column: 2; grid-row: 1 / span 2; }
+.mosaic-cell:nth-child(3) { grid-column: 3; grid-row: 1; }
+.mosaic-cell:nth-child(4) { grid-column: 1; grid-row: 2; }
+.mosaic-cell:nth-child(5) { grid-column: 3; grid-row: 2; }
+.mosaic-bg { position: absolute; inset: 0; transition: transform 0.9s var(--ease); }
+.mosaic-cell:hover .mosaic-bg { transform: scale(1.05); }
+.mbg-1 { background: linear-gradient(150deg, #dfe1ef, #cdd0e4); }
+.mbg-2 { background: linear-gradient(150deg, #e4e2ef, #d0cde4); }
+.mbg-3 { background: linear-gradient(150deg, #dce4ef, #c8d4e8); }
+.mbg-4 { background: linear-gradient(150deg, #e4dff0, #d0c8e4); }
+.mbg-5 { background: linear-gradient(150deg, #dde2f0, #c8d0e8); }
+.mosaic-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,25,22,0.3) 0%, transparent 55%); pointer-events: none; }
+.mosaic-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 0.9s var(--ease); }
+.mosaic-cell:hover .mosaic-img { transform: scale(1.05); }
+.mosaic-ph { font-size: 7.5px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(26,25,22,0.25); font-weight: 400; background: rgba(255,255,255,0.55); padding: 5px 10px; border: 1px solid rgba(26,25,22,0.08); position: relative; z-index: 1; }
+.mosaic-cap { position: absolute; bottom: 22px; left: 22px; z-index: 2; font-family: var(--ff-d); font-size: 15px; font-weight: 300; font-style: italic; color: rgba(255,255,255,0.9); }
+
+/* ── CATEGORY NAV ── */
+.cat-nav { display: flex; align-items: center; padding: 0 52px; overflow-x: auto; border-bottom: 1px solid var(--border); scrollbar-width: none; -webkit-overflow-scrolling: touch; background: var(--white); gap: 0; }
+.cat-nav::-webkit-scrollbar { display: none; }
+.cat-link { text-decoration: none; flex-shrink: 0; display: flex; align-items: baseline; gap: 5px; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 400; color: var(--muted); padding: 18px 0; border-bottom: 1.5px solid transparent; transition: color 0.25s, border-color 0.25s; }
+.cat-link:hover, .cat-link.active { color: var(--ink); border-bottom-color: var(--ink); }
+.cat-link-sub { font-size: 8px; letter-spacing: 0.1em; color: var(--muted); font-weight: 300; }
+.cat-sep { width: 1px; height: 10px; background: var(--border); flex-shrink: 0; margin: 0 24px; }
+
+/* ── SECTION HEADER ── */
+.section-header { display: flex; justify-content: space-between; align-items: baseline; padding: 52px 52px 40px; }
+.sec-title { font-family: var(--ff-d); font-size: clamp(28px, 2.8vw, 44px); font-weight: 300; color: var(--ink); line-height: 1; }
+.sec-title em { font-style: italic; }
+.link-all { font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 400; text-decoration: none; border-bottom: 1px solid var(--border); padding-bottom: 2px; transition: color 0.25s, border-color 0.25s; }
+.link-all:hover { color: var(--ink); border-color: var(--ink); }
+
+/* ── PRODUCT GRID ── */
+.product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border2); border-top: 1px solid var(--border); margin: 0 52px 80px; }
+a.product-card { text-decoration: none; color: inherit; display: block; cursor: pointer; background: var(--white); }
+.p-img-wrap { position: relative; aspect-ratio: 3/4; overflow: hidden; }
+.p-img { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform 0.9s var(--ease); background: var(--off); }
+a.product-card:hover .p-img { transform: scale(1.04); }
+.p-img img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.p-img-ph { font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(26,25,22,0.22); font-weight: 400; background: rgba(255,255,255,0.6); padding: 5px 10px; border: 1px solid rgba(26,25,22,0.08); position: relative; z-index: 1; }
+.pbg-a { background: linear-gradient(145deg, #dfe1ef, #cdd0e4); }
+.pbg-b { background: linear-gradient(145deg, #e8e4f0, #d4cfe8); }
+.pbg-c { background: linear-gradient(145deg, #dce4ef, #c8d4e8); }
+.pbg-d { background: linear-gradient(145deg, #e4e0f0, #d0c8e8); }
+.p-badge { position: absolute; top: 14px; left: 14px; font-size: 7.5px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 400; color: white; background: var(--ink); padding: 4px 9px; z-index: 2; }
+.p-badge.sold-out { background: var(--muted); }
+.p-badge.new { background: var(--gold); }
+.p-info { padding: 16px 18px 22px; border-top: 1px solid var(--border2); }
+.p-cat { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); font-weight: 400; margin-bottom: 6px; }
+.p-name { font-family: var(--ff-d); font-size: 19px; font-weight: 400; color: var(--ink); line-height: 1.2; margin-bottom: 6px; }
+.p-price { font-size: 13px; color: var(--mid); font-weight: 300; }
+.p-proper-price { text-decoration: line-through; color: var(--muted); margin-right: 6px; }
+.no-items-msg { padding: 80px 52px; font-size: 14px; color: var(--muted); text-align: center; }
+
+/* Load More */
+.load-more-wrap { text-align: center; padding: 0 0 80px; }
+.load-more-btn { background: none; border: 1px solid var(--border); color: var(--mid); font-family: var(--ff-b); font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400; padding: 13px 48px; cursor: pointer; transition: all 0.3s; }
+.load-more-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+/* ── STORY ── */
+.story { display: grid; grid-template-columns: 5fr 4fr; border-top: 1px solid var(--border); }
+.story-photos { position: relative; min-height: 640px; overflow: hidden; background: linear-gradient(145deg, #dfe1ef, #c8cce4); display: flex; align-items: center; justify-content: center; }
+.story-photos img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.story-photos-stripe { position: absolute; inset: 0; background: repeating-linear-gradient(-30deg, transparent 0, transparent 50px, rgba(255,255,255,0.04) 50px, rgba(255,255,255,0.04) 51px); z-index: 1; }
+.story-photo-thumb { position: absolute; bottom: 32px; right: -1px; width: 190px; height: 240px; background: linear-gradient(145deg, #e8e4f0, #d0cce4); border: 3px solid var(--white); display: flex; align-items: center; justify-content: center; box-shadow: -8px 8px 32px rgba(26,25,22,0.15); z-index: 2; }
+.story-content { display: flex; flex-direction: column; justify-content: center; padding: 80px 72px 80px 80px; background: var(--off); border-left: 1px solid var(--border); }
+.story-tag { font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--gold); font-weight: 400; display: flex; align-items: center; gap: 14px; margin-bottom: 32px; }
+.story-tag::before { content: ''; width: 22px; height: 1px; background: var(--gold-lt); flex-shrink: 0; }
+.story-title { font-family: var(--ff-d); font-size: clamp(30px, 2.8vw, 46px); font-weight: 300; line-height: 1.2; color: var(--ink); margin-bottom: 28px; }
+.story-title em { font-style: italic; }
+.story-body { font-size: 14px; line-height: 2; color: var(--mid); font-weight: 300; margin-bottom: 16px; max-width: 380px; }
+.story-atelier { font-size: 9.5px; letter-spacing: 0.14em; color: var(--muted); display: flex; align-items: center; gap: 12px; margin-bottom: 48px; }
+.story-atelier::before { content: ''; width: 16px; height: 1px; background: var(--gold-lt); flex-shrink: 0; }
+.btn-outlined { display: inline-block; text-decoration: none; border: 1px solid var(--ink); color: var(--ink); font-family: var(--ff-b); font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 400; padding: 13px 28px; transition: background 0.3s, color 0.3s; align-self: flex-start; cursor: pointer; background: none; }
+.btn-outlined:hover { background: var(--ink); color: white; }
+
+/* ── VALUES ── */
+.values { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--border); }
+.value-item { padding: 60px 52px; border-right: 1px solid var(--border); background: var(--white); }
+.value-item:last-child { border-right: none; }
+.value-num { font-family: var(--ff-d); font-size: 10px; font-weight: 400; color: var(--gold); letter-spacing: 0.14em; margin-bottom: 22px; display: block; }
+.value-name { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 400; color: var(--ink); margin-bottom: 16px; }
+.value-desc { font-size: 13.5px; line-height: 1.9; color: var(--mid); font-weight: 300; }
+
+/* ── GIFT ── */
+.gift { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border); }
+.gift-content { display: flex; flex-direction: column; justify-content: center; padding: 88px 80px; background: var(--off2); border-right: 1px solid var(--border); }
+.gift-tag { font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--gold); font-weight: 400; display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+.gift-tag::before { content: ''; width: 20px; height: 1px; background: var(--gold-lt); flex-shrink: 0; }
+.gift-title { font-family: var(--ff-d); font-size: clamp(30px, 2.8vw, 48px); font-weight: 300; line-height: 1.15; color: var(--ink); margin-bottom: 22px; }
+.gift-title em { font-style: italic; }
+.gift-desc { font-size: 14px; line-height: 1.95; color: var(--mid); font-weight: 300; margin-bottom: 48px; max-width: 340px; }
+.gift-photo { position: relative; overflow: hidden; min-height: 480px; background: linear-gradient(140deg, #dce0ef, #c4cce4); display: flex; align-items: center; justify-content: center; }
+.gift-photo-stripe { position: absolute; inset: 0; background: repeating-linear-gradient(60deg, transparent 0, transparent 32px, rgba(255,255,255,0.05) 32px, rgba(255,255,255,0.05) 33px); }
+
+/* ── NEWSLETTER ── */
+.newsletter { padding: 96px 72px; display: grid; grid-template-columns: 1fr 1fr; gap: 88px; align-items: center; background: var(--white); border-top: 1px solid var(--border); }
+.nl-title { font-family: var(--ff-d); font-size: clamp(28px, 2.5vw, 42px); font-weight: 300; color: var(--ink); margin-bottom: 16px; line-height: 1.1; }
+.nl-title em { font-style: italic; }
+.nl-desc { font-size: 13.5px; color: var(--mid); font-weight: 300; line-height: 1.9; }
+.nl-form { display: flex; flex-direction: column; gap: 12px; }
+.nl-row { display: flex; border: 1px solid var(--border); }
+.nl-input { flex: 1; padding: 14px 18px; border: none; outline: none; font-family: var(--ff-b); font-size: 13px; color: var(--ink); background: transparent; font-weight: 300; }
+.nl-input::placeholder { color: var(--muted); }
+.nl-btn { background: var(--ink); color: white; border: none; cursor: pointer; font-family: var(--ff-b); font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400; padding: 0 22px; transition: background 0.3s; white-space: nowrap; }
+.nl-btn:hover { background: var(--gold); }
+.nl-note { font-size: 10.5px; color: var(--muted); font-weight: 300; }
+
+/* ── ITEM DETAIL PAGE ── */
+.item-page { display: grid; grid-template-columns: 1.1fr 1fr; min-height: calc(100vh - 68px); border-bottom: 1px solid var(--border); }
+.item-images { position: relative; background: var(--off); display: flex; flex-direction: column; }
+.item-main-image { flex: 1; position: relative; overflow: hidden; min-height: 480px; }
+.item-main-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: opacity 0.4s; }
+.item-thumbs { display: flex; gap: 3px; padding: 3px; background: var(--border2); }
+.thumb { border: none; cursor: pointer; padding: 0; background: var(--off); flex: 1; aspect-ratio: 1; overflow: hidden; opacity: 0.6; transition: opacity 0.25s; }
+.thumb:hover, .thumb.active { opacity: 1; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.item-content { display: flex; flex-direction: column; padding: 64px 72px; background: var(--white); overflow-y: auto; }
+.item-eyebrow { font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--gold); font-weight: 400; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.item-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--gold-lt); }
+.item-title { font-family: var(--ff-d); font-size: clamp(28px, 3vw, 46px); font-weight: 300; color: var(--ink); line-height: 1.15; margin-bottom: 20px; }
+.item-price-wrap { display: flex; align-items: baseline; gap: 10px; margin-bottom: 28px; }
+.item-price { font-size: 18px; color: var(--ink); font-weight: 300; }
+.item-proper-price { font-size: 14px; color: var(--muted); text-decoration: line-through; font-weight: 300; }
+.item-discount { font-size: 10px; color: var(--gold); letter-spacing: 0.1em; }
+.item-desc { font-size: 14px; line-height: 2; color: var(--mid); font-weight: 300; margin-bottom: 32px; border-top: 1px solid var(--border2); padding-top: 24px; }
+/* ItemSelectTag */
+.item-select-wrap { margin-bottom: 20px; }
+.item-select-wrap select { width: 100%; padding: 13px 16px; border: 1px solid var(--border); background: var(--white); font-family: var(--ff-b); font-size: 13px; color: var(--ink); cursor: pointer; -webkit-appearance: none; appearance: none; outline: none; font-weight: 300; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%236a6760' stroke-width='1.5'%3E%3Cpath d='m1 1 5 5 5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+/* PurchaseButton */
+.purchase-btn-wrap { margin-bottom: 24px; }
+.purchase-btn-wrap button, .purchase-btn-wrap input[type="submit"] { width: 100%; background: var(--ink); color: white; border: none; font-family: var(--ff-b); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; font-weight: 400; padding: 16px; cursor: pointer; transition: background 0.3s; }
+.purchase-btn-wrap button:hover, .purchase-btn-wrap input[type="submit"]:hover { background: var(--gold); }
+.purchase-btn-wrap button:disabled { background: var(--muted); cursor: default; }
+.sold-out-msg { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); padding: 14px 0; margin-bottom: 24px; }
+.item-sale-status { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+.item-attention-wrap { margin-top: 24px; border-top: 1px solid var(--border2); padding-top: 20px; font-size: 12px; color: var(--muted); line-height: 1.8; }
+.illegal-report-wrap { margin-top: 12px; font-size: 11px; }
+.illegal-report-wrap a { color: var(--muted); text-decoration: none; }
+.illegal-report-wrap a:hover { color: var(--ink); }
+
+/* ── ABOUT PAGE ── */
+.about-page { padding: 96px 72px; max-width: 780px; margin: 0 auto; }
+.about-page .stmt-label { margin-bottom: 28px; }
+.about-text { font-size: 15px; line-height: 2.1; color: var(--mid); font-weight: 300; }
+.about-text p { margin-bottom: 1.4em; }
+
+/* ── PAGE CONTENTS (Contact/Privacy/Law) ── */
+.page-contents-wrap { padding: 80px 72px; max-width: 820px; margin: 0 auto; }
+.page-contents-wrap h2 { font-family: var(--ff-d); font-size: 36px; font-weight: 300; margin-bottom: 40px; color: var(--ink); }
+
+/* ── FOOTER ── */
+.footer { border-top: 1px solid var(--border); background: var(--ink); color: rgba(255,255,255,0.4); padding: 72px 52px 36px; }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 52px; padding-bottom: 52px; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 28px; }
+.f-brand { font-family: var(--ff-d); font-size: 22px; font-weight: 400; letter-spacing: 0.3em; text-transform: uppercase; color: white; margin-bottom: 3px; }
+.f-sub { font-size: 7.5px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); font-weight: 400; margin-bottom: 18px; display: block; }
+.f-desc { font-size: 12.5px; font-weight: 300; line-height: 1.85; max-width: 220px; margin-bottom: 28px; }
+.f-social { display: flex; gap: 10px; }
+.f-soc { width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.3); cursor: pointer; text-decoration: none; transition: all 0.3s; }
+.f-soc:hover { border-color: var(--gold); color: var(--gold); }
+.f-col-title { font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400; color: white; margin-bottom: 22px; }
+.f-links { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+.f-links a { text-decoration: none; color: rgba(255,255,255,0.33); font-size: 12.5px; font-weight: 300; transition: color 0.25s; }
+.f-links a:hover { color: rgba(255,255,255,0.75); }
+.footer-btm { display: flex; justify-content: space-between; font-size: 10px; color: rgba(255,255,255,0.15); font-weight: 300; }
+.footer-btm a { text-decoration: none; color: inherit; transition: color 0.25s; }
+.footer-btm a:hover { color: rgba(255,255,255,0.45); }
+.footer-btm-links { display: flex; gap: 20px; }
+/* IllegalReportTag in footer */
+.footer .illegal-report-wrap { display: inline; }
+.footer .illegal-report-wrap a { color: rgba(255,255,255,0.15); font-size: 10px; text-decoration: none; }
+.footer .illegal-report-wrap a:hover { color: rgba(255,255,255,0.45); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s var(--ease), transform 0.8s var(--ease); }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.d1 { transition-delay: 0.1s; }
+.d2 { transition-delay: 0.2s; }
+.d3 { transition-delay: 0.3s; }
+.d4 { transition-delay: 0.4s; }
+</style>
+</head>
+<body>
+{BackgroundTag}
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-links">
+    <a href="{IndexPageURL}" class="nav-a">Collection</a>
+    <a href="{IndexPageURL}" class="nav-a">Baby</a>
+    <a href="{IndexPageURL}" class="nav-a">Gift</a>
+  </div>
+  <a href="{IndexPageURL}" class="nav-logo">
+    <span class="nav-logo-main">{LogoTag}</span>
+    <span class="nav-logo-sub">オレット</span>
+  </a>
+  <div class="nav-links nav-links-r">
+    <a href="{AboutPageURL}" class="nav-a">Our Story</a>
+    <div class="nav-utils">
+      <button class="icon-btn" id="searchToggle" aria-label="検索">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+      </button>
+      {BASEMenuTag}
+    </div>
+  </div>
+</nav>
+
+<!-- Search Overlay -->
+<div class="search-overlay" id="searchOverlay">
+  <form action="{SearchPageURL}" method="get" class="search-form">
+    <input type="text" name="q" class="search-input" placeholder="商品を検索…" value="{IndexPageSearch}">
+    <button type="submit" class="search-submit">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+    </button>
+  </form>
+  <button class="search-close" id="searchClose">&#x2715;</button>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOP PAGE
+════════════════════════════════════════ -->
+{block:IndexPage}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-photo">
+    <img src="https://cdn.jsdelivr.net/gh/piste-boss/ishikawa-kaitai-LP@main/aurette-assets/aurette-hero-1.png" alt="Aurette — コレクション">
+  </div>
+  <div class="hero-stamp">Spring / Summer 2025</div>
+  <div class="hero-text">
+    <div class="hero-eyebrow">Ethical Luxury for Little Ones</div>
+    <h1 class="hero-title">
+      Hand-smocked<br>
+      <em>for little ones</em>
+    </h1>
+    <p class="hero-sub">タイの小さなアトリエで、職人が一針一針手仕上げするスモッキングの子供服。上質と倫理を、小さな体に纏わせて。</p>
+    <div class="hero-cta">
+      <a href="#collection" class="btn-dark">Collection を見る</a>
+      <a href="#story" class="btn-text-link">Our Story <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span class="scroll-word">Scroll</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item"><span>Hand-smocked in Thailand</span><span class="marquee-dia"></span><span>Ethical Luxury for Little Ones</span><span class="marquee-dia"></span><span>Gift Wrapping</span><span class="marquee-dia"></span><span>送料無料</span><span class="marquee-dia"></span></div>
+    <div class="marquee-item" aria-hidden="true"><span>Hand-smocked in Thailand</span><span class="marquee-dia"></span><span>Ethical Luxury for Little Ones</span><span class="marquee-dia"></span><span>Gift Wrapping</span><span class="marquee-dia"></span><span>送料無料</span><span class="marquee-dia"></span></div>
+  </div>
+</div>
+
+<!-- STATEMENT -->
+<section class="statement reveal">
+  <div class="statement-left">
+    <div class="stmt-label">Concept</div>
+    <h2 class="stmt-title">Hand-smocked.<br><em>Ethically made.</em></h2>
+  </div>
+  <div class="statement-right">
+    <p class="stmt-body">「上品であり洗練されたセンス」と「上流の作法」——フランス語で <em style="font-style:italic">bon chic bon genre</em> と呼ばれるその精神を、Auretteはすべての製品づくりのテーマとしています。タイのアトリエで職人の手によって一針一針刺繍されるスモッキングは、子どもたちへの最初の美の体験です。</p>
+    <div class="stmt-detail">Hand-smocked in a small atelier, Thailand &nbsp;&#xb7;&nbsp; Ethical Luxury for Little Ones</div>
+  </div>
+</section>
+
+<!-- MOSAIC -->
+<div class="mosaic">
+  <div class="mosaic-cell"><img class="mosaic-img" src="https://cdn.jsdelivr.net/gh/piste-boss/ishikawa-kaitai-LP@main/aurette-assets/aurette-mosaic-2.png" alt="Girls"><div class="mosaic-overlay"></div><div class="mosaic-cap">Girls</div></div>
+  <div class="mosaic-cell"><img class="mosaic-img" src="https://cdn.jsdelivr.net/gh/piste-boss/ishikawa-kaitai-LP@main/aurette-assets/aurette-mosaic-overlay-3.png" alt="Boys"><div class="mosaic-overlay"></div><div class="mosaic-cap">Boys</div></div>
+  <div class="mosaic-cell"><img class="mosaic-img" src="https://cdn.jsdelivr.net/gh/piste-boss/ishikawa-kaitai-LP@main/aurette-assets/aurette-mosaic-overlay-4.png" alt="Atelier"><div class="mosaic-overlay"></div><div class="mosaic-cap">Atelier</div></div>
+  <div class="mosaic-cell"><img class="mosaic-img" src="https://cdn.jsdelivr.net/gh/piste-boss/ishikawa-kaitai-LP@main/aurette-assets/aurette-mosaic-overlay-5.png" alt="Detail"><div class="mosaic-overlay"></div><div class="mosaic-cap">Detail</div></div>
+  <div class="mosaic-cell"><img class="mosaic-img" src="https://cdn.jsdelivr.net/gh/piste-boss/ishikawa-kaitai-LP@main/aurette-assets/aurette-mosaic-overlay-6.png" alt="Gift"><div class="mosaic-overlay"></div><div class="mosaic-cap">Gift</div></div>
+</div>
+
+<!-- CATEGORY NAV -->
+<div class="cat-nav">
+  <a href="{IndexPageURL}" class="cat-link active">すべて</a><span class="cat-sep"></span>
+  <a href="{IndexPageURL}" class="cat-link">Baby</a><span class="cat-sep"></span>
+  <a href="{IndexPageURL}" class="cat-link">Girls</a><span class="cat-sep"></span>
+  <a href="{IndexPageURL}" class="cat-link">Boys</a><span class="cat-sep"></span>
+  <a href="{IndexPageURL}" class="cat-link">Gift Set</a><span class="cat-sep"></span>
+  <a href="{IndexPageURL}" class="cat-link">New Arrivals</a>
+</div>
+
+<!-- PRODUCTS -->
+<div class="section-header reveal" id="collection">
+  <h2 class="sec-title">New <em>Arrivals</em></h2>
+  <a href="{IndexPageURL}" class="link-all">すべて見る</a>
+</div>
+
+<div class="product-grid" id="product-grid">
+  {block:HasItems}
+  {block:Items}
+  <a href="{ItemPageURL}" class="product-card reveal">
+    <div class="p-img-wrap">
+      <div class="p-img">
+        {block:ItemImage1}
+        <img src="{ItemImage1URL-640}" alt="{ItemTitle}" loading="lazy">
+        {/block:ItemImage1}
+        {block:NoItemImage1}
+        <img src="{ItemNoImageURL}" alt="{ItemTitle}">
+        {/block:NoItemImage1}
+      </div>
+      {block:NoItemStock}
+      <span class="p-badge sold-out">SOLD OUT</span>
+      {/block:NoItemStock}
+      {block:HasItemStock}
+      <span class="p-badge">Hand-smocked</span>
+      {/block:HasItemStock}
+    </div>
+    <div class="p-info">
+      <div class="p-name">{ItemTitle}</div>
+      <div class="p-price">
+        {block:HasItemProperPrice}
+        <span class="p-proper-price">&#xa5;{ItemProperPrice}</span>
+        {/block:HasItemProperPrice}
+        &#xa5;{ItemPrice}
+      </div>
+    </div>
+  </a>
+  {/block:Items}
+  {/block:HasItems}
+  {block:NoItems}
+  <p class="no-items-msg">現在、商品はございません。</p>
+  {/block:NoItems}
+</div>
+
+<!-- Pagination -->
+<div class="load-more-wrap">
+  <button class="load-more-btn" id="load-more-btn">もっと見る</button>
+</div>
+
+<!-- STORY -->
+<section class="story" id="story">
+  <div class="story-photos reveal">
+    <img src="{image:Story Image}" alt="Aurette アトリエ">
+    <div class="story-photos-stripe"></div>
+    <div class="story-photo-thumb"><div class="p-img-ph" style="font-size:7.5px">刺繍ディテール</div></div>
+  </div>
+  <div class="story-content">
+    <div class="story-tag reveal">Our Story</div>
+    <h2 class="story-title reveal d1">タイの小さなアトリエで<br>生まれる、<em>本物の手仕事。</em></h2>
+    <p class="story-body reveal d2">Auretteは、タイのアトリエで職人が一針一針手で刺繍するスモッキング技法で仕立てた子供服ブランドです。上質なオーガニック素材と、100年以上の歴史を持つヨーロッパの伝統技法を組み合わせ、小さな体にふさわしい本物の美しさをお届けします。</p>
+    <div class="story-atelier reveal d2">Hand-smocked in a small atelier, Thailand</div>
+    <a href="{AboutPageURL}" class="btn-outlined reveal d3">Our Story を読む</a>
+  </div>
+</section>
+
+<!-- VALUES -->
+<div class="values">
+  <div class="value-item reveal"><span class="value-num">01</span><div class="value-name">Hand-smocked</div><p class="value-desc">すべてのデザインは職人が手で刺繍するスモッキング仕上げ。同じものは2つとない、一点一点のこだわり。</p></div>
+  <div class="value-item reveal d1"><span class="value-num">02</span><div class="value-name">Ethical Materials</div><p class="value-desc">OEKO-TEX認証取得済みのオーガニックコットンのみを使用。生まれたての敏感な肌にも安心です。</p></div>
+  <div class="value-item reveal d2"><span class="value-num">03</span><div class="value-name">Gift Ready</div><p class="value-desc">出産祝い、お誕生日、お宮参りに。美しいギフトボックスに包んでお届けします。</p></div>
+</div>
+
+<!-- GIFT -->
+<section class="gift">
+  <div class="gift-content">
+    <div class="gift-tag reveal">Gift Collection</div>
+    <h2 class="gift-title reveal d1">大切な人への<br><em>贈りものに。</em></h2>
+    <p class="gift-desc reveal d2">出産祝い、お誕生日、お宮参り。人生の特別な瞬間に寄り添うAuretteのギフトセットを、美しいボックスでお届けします。</p>
+    <a href="{IndexPageURL}" class="btn-outlined reveal d3">ギフトを選ぶ</a>
+  </div>
+  <div class="gift-photo">
+    <img src="https://cdn.jsdelivr.net/gh/piste-boss/ishikawa-kaitai-LP@main/aurette-assets/aurette-btn-outlined-7.png" alt="Gift Box" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;">
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <div>
+    <h2 class="nl-title reveal">新作情報を<br><em>いち早くお届け</em></h2>
+    <p class="nl-desc reveal d1">メールアドレスをご登録で、新コレクション先行案内・メンバー限定優待をお届けします。</p>
+  </div>
+  <div class="nl-form reveal d1">
+    <div class="nl-row">
+      <input type="email" class="nl-input" placeholder="メールアドレスを入力">
+      <button type="button" class="nl-btn">登録する</button>
+    </div>
+    <p class="nl-note">プライバシーポリシーに同意の上ご登録ください。</p>
+  </div>
+</section>
+
+{/block:IndexPage}
+
+<!-- ═══════════════════════════════════════
+     ITEM DETAIL PAGE
+════════════════════════════════════════ -->
+{block:ItemPage}
+<section class="item-page">
+  <div class="item-images">
+    <div class="item-main-image">
+      {block:ItemImage1}
+      <img src="{ItemImage1URL-1280}" alt="{ItemTitle}" id="main-img">
+      {/block:ItemImage1}
+      {block:NoItemImage1}
+      <img src="{ItemNoImageURL}" alt="{ItemTitle}" id="main-img">
+      {/block:NoItemImage1}
+    </div>
+    <div class="item-thumbs">
+      {block:ItemImage1}
+      <button class="thumb active" onclick="switchImg(this,'{ItemImage1URL-1280}')" type="button">
+        <img src="{ItemImage1URL-300}" alt="">
+      </button>
+      {/block:ItemImage1}
+      {block:ItemImage2}
+      <button class="thumb" onclick="switchImg(this,'{ItemImage2URL-1280}')" type="button">
+        <img src="{ItemImage2URL-300}" alt="">
+      </button>
+      {/block:ItemImage2}
+      {block:ItemImage3}
+      <button class="thumb" onclick="switchImg(this,'{ItemImage3URL-1280}')" type="button">
+        <img src="{ItemImage3URL-300}" alt="">
+      </button>
+      {/block:ItemImage3}
+      {block:ItemImage4}
+      <button class="thumb" onclick="switchImg(this,'{ItemImage4URL-1280}')" type="button">
+        <img src="{ItemImage4URL-300}" alt="">
+      </button>
+      {/block:ItemImage4}
+    </div>
+  </div>
+  <div class="item-content">
+    <div class="item-eyebrow">Aurette</div>
+    <h1 class="item-title">{ItemTitle}</h1>
+    <div class="item-price-wrap">
+      {block:HasItemProperPrice}
+      <span class="item-proper-price">&#xa5;{ItemProperPrice}</span>
+      <span class="item-discount">{ItemDiscountRate}% OFF</span>
+      {/block:HasItemProperPrice}
+      <span class="item-price">&#xa5;{ItemPrice}</span>
+    </div>
+    <div class="item-desc">{ItemDetail}</div>
+    <div class="item-select-wrap">
+      {ItemSelectTag}
+    </div>
+    {block:HasItemStock}
+    {block:PurchaseForm}
+    <div class="purchase-btn-wrap">
+      {PurchaseButton}
+    </div>
+    {/block:PurchaseForm}
+    {/block:HasItemStock}
+    {block:NoItemStock}
+    <p class="sold-out-msg">只今、品切れ中です。</p>
+    {/block:NoItemStock}
+    <div class="item-sale-status">{ItemSaleStatusTag}</div>
+    <div class="item-attention-wrap">{ItemAttentionTag}</div>
+    <div class="illegal-report-wrap">{IllegalReportTag}</div>
+  </div>
+</section>
+{/block:ItemPage}
+
+<!-- ═══════════════════════════════════════
+     ABOUT PAGE
+════════════════════════════════════════ -->
+{block:AboutPage}
+<div class="about-page">
+  <div class="stmt-label">Our Story</div>
+  <div class="about-text">{ShopIntroduction}</div>
+</div>
+{/block:AboutPage}
+
+<!-- ═══════════════════════════════════════
+     CONTACT / PRIVACY / LAW / OTHER PAGES
+════════════════════════════════════════ -->
+{block:NotIndexPage}
+{block:NotItemPage}
+{block:NotAboutPage}
+<div class="page-contents-wrap">
+  {PageContents}
+</div>
+{/block:NotAboutPage}
+{/block:NotItemPage}
+{/block:NotIndexPage}
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-top">
+    <div>
+      <div class="f-brand">{ShopName}</div>
+      <span class="f-sub">オレット</span>
+      <p class="f-desc">Ethical Luxury for Little Ones。タイのアトリエで手仕上げする、0&#x301c;6歳のための高級子供服。</p>
+      <div class="f-social">
+        <a href="https://www.instagram.com/pier.331/" target="_blank" rel="noopener" class="f-soc" aria-label="Instagram">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+      </div>
+    </div>
+    <div>
+      <div class="f-col-title">Shop</div>
+      <ul class="f-links">
+        <li><a href="{IndexPageURL}">New Arrivals</a></li>
+        <li><a href="{IndexPageURL}">Smocking Dresses</a></li>
+        <li><a href="{IndexPageURL}">Baby Rompers</a></li>
+        <li><a href="{IndexPageURL}">Gift Sets</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="f-col-title">About</div>
+      <ul class="f-links">
+        <li><a href="{AboutPageURL}">Our Story</a></li>
+        <li><a href="{ContactPageURL}">お問い合わせ</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="f-col-title">Support</div>
+      <ul class="f-links">
+        <li><a href="{ContactPageURL}">お問い合わせ</a></li>
+        <li><a href="{PrivacyPageURL}">プライバシーポリシー</a></li>
+        <li><a href="{LawPageURL}">特定商取引法</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-btm">
+    <span>&#xa9; {ShopName} All rights reserved. Powered by BASE</span>
+    <div class="footer-btm-links">
+      <a href="{PrivacyPageURL}">プライバシーポリシー</a>
+      <a href="{LawPageURL}">特定商取引法</a>
+      <span class="illegal-report-wrap">{IllegalReportTag}</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Reveal on scroll
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+// Search overlay
+var searchToggle = document.getElementById('searchToggle');
+var searchOverlay = document.getElementById('searchOverlay');
+var searchClose = document.getElementById('searchClose');
+if (searchToggle) { searchToggle.addEventListener('click', function() { searchOverlay.classList.add('open'); setTimeout(function(){ searchOverlay.querySelector('.search-input').focus(); }, 100); }); }
+if (searchClose) { searchClose.addEventListener('click', function() { searchOverlay.classList.remove('open'); }); }
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') searchOverlay.classList.remove('open'); });
+
+// Category nav active
+document.querySelectorAll('.cat-link').forEach(function(link) {
+  link.addEventListener('click', function() {
+    document.querySelectorAll('.cat-link').forEach(function(l) { l.classList.remove('active'); });
+    link.classList.add('active');
+  });
+});
+
+// Smooth scroll for hero CTA
+var collLink = document.querySelector('[href="#collection"]');
+if (collLink) { collLink.addEventListener('click', function(e) { e.preventDefault(); var t = document.getElementById('collection'); if (t) t.scrollIntoView({behavior:'smooth'}); }); }
+var storyLink = document.querySelector('[href="#story"]');
+if (storyLink) { storyLink.addEventListener('click', function(e) { e.preventDefault(); var t = document.getElementById('story'); if (t) t.scrollIntoView({behavior:'smooth'}); }); }
+
+// Item image switcher
+function switchImg(btn, src) {
+  var mainImg = document.getElementById('main-img');
+  if (mainImg) mainImg.src = src;
+  document.querySelectorAll('.thumb').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+// Pagination (LoadItemsPage)
+(function() {
+  var loadBtn = document.getElementById('load-more-btn');
+  if (!loadBtn) return;
+  var maxPage = {MaxPageNumber};
+  var nextPage = {NextPageNumber};
+  var loadURL = '{LoadItemsPageURL}';
+  var loadParams = '{LoadItemsPageURLParams}';
+  if (maxPage <= 1) { loadBtn.style.display = 'none'; return; }
+  loadBtn.addEventListener('click', function() {
+    if (nextPage > maxPage) { loadBtn.style.display = 'none'; return; }
+    loadBtn.textContent = '読み込み中…';
+    loadBtn.disabled = true;
+    fetch(loadURL + nextPage + loadParams)
+      .then(function(r) { return r.text(); })
+      .then(function(html) {
+        var grid = document.getElementById('product-grid');
+        grid.insertAdjacentHTML('beforeend', html);
+        nextPage++;
+        loadBtn.textContent = 'もっと見る';
+        loadBtn.disabled = false;
+        if (nextPage > maxPage) loadBtn.style.display = 'none';
+        grid.querySelectorAll('.reveal:not(.in)').forEach(function(el) { obs.observe(el); });
+      })
+      .catch(function() { loadBtn.textContent = 'もっと見る'; loadBtn.disabled = false; });
+  });
+})();
+</script>
+</body>
+</html>{/block:NotLoadItemsPage}
+
+{block:LoadItemsPage}
+{block:Items}
+<a href="{ItemPageURL}" class="product-card reveal">
+  <div class="p-img-wrap">
+    <div class="p-img">
+      {block:ItemImage1}
+      <img src="{ItemImage1URL-640}" alt="{ItemTitle}" loading="lazy">
+      {/block:ItemImage1}
+      {block:NoItemImage1}
+      <img src="{ItemNoImageURL}" alt="{ItemTitle}">
+      {/block:NoItemImage1}
+    </div>
+    {block:NoItemStock}
+    <span class="p-badge sold-out">SOLD OUT</span>
+    {/block:NoItemStock}
+    {block:HasItemStock}
+    <span class="p-badge">Hand-smocked</span>
+    {/block:HasItemStock}
+  </div>
+  <div class="p-info">
+    <div class="p-name">{ItemTitle}</div>
+    <div class="p-price">
+      {block:HasItemProperPrice}
+      <span class="p-proper-price">&#xa5;{ItemProperPrice}</span>
+      {/block:HasItemProperPrice}
+      &#xa5;{ItemPrice}
+    </div>
+  </div>
+</a>
+{/block:Items}
+{/block:LoadItemsPage}
